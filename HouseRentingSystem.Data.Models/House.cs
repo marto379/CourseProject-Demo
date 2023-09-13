@@ -41,6 +41,8 @@ namespace HouseRentingSystem.Data.Models
 
         public virtual Agent Agent { get; set; } = null!;
 
-        public int MyProperty { get; set; }
+        public Guid? RenterId { get; set; }
+
+        public virtual  ApplicationUser? Renter { get; set; }
     }
 }
