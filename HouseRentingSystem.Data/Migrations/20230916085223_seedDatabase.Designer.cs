@@ -4,6 +4,7 @@ using HouseRentingSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HouseRentingSystem.Data.Migrations
 {
     [DbContext(typeof(HouseRentingDbContext))]
-    partial class HouseRentingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230916085223_seedDatabase")]
+    partial class seedDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,11 +163,6 @@ namespace HouseRentingSystem.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 9, 16, 12, 36, 7, 87, DateTimeKind.Utc).AddTicks(5743));
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -200,11 +197,10 @@ namespace HouseRentingSystem.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7b046a0c-d554-4a05-ad2a-845a7ba9c984"),
+                            Id = new Guid("409186cb-bf1f-4f04-9ee8-5b4e2d15a7ef"),
                             Address = "North London, UK (near the border)",
                             AgentId = new Guid("c23c8dd9-c699-4334-9ee9-d277018fcbf4"),
                             CategoryId = 3,
-                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "A big house for your whole family. Don't miss to buy a house with three bedrooms.",
                             ImageUrl = "https://www.luxury-architecture.net/wpcontent/uploads/2017/12/1513217889-7597-FAIRWAYS-010.jpg",
                             PricePerMonth = 2100.00m,
@@ -213,11 +209,10 @@ namespace HouseRentingSystem.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8a81919b-aa71-4b90-9504-7cfa0e1f9d40"),
+                            Id = new Guid("b89a953a-a09b-4335-ad9d-ad526564ea3e"),
                             Address = "Near the Sea Garden in Burgas, Bulgaria",
                             AgentId = new Guid("c23c8dd9-c699-4334-9ee9-d277018fcbf4"),
                             CategoryId = 2,
-                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "It has the best comfort you will ever ask for. With two bedrooms,it is great for your family.",
                             ImageUrl = "https://cf.bstatic.com/xdata/images/hotel/max1024x768/179489660.jpg?k=2029f6d9589b49c95dcc9503a265e292c2cdfcb5277487a0050397c3f8dd545a&o=&hp=1",
                             PricePerMonth = 1200.00m,
@@ -225,11 +220,10 @@ namespace HouseRentingSystem.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3ddb60a8-2c98-40b5-979b-a230d6e683bd"),
+                            Id = new Guid("ceeabc70-e652-497a-9db3-1c785f3f5cb6"),
                             Address = "Boyana Neighbourhood, Sofia, Bulgaria",
                             AgentId = new Guid("c23c8dd9-c699-4334-9ee9-d277018fcbf4"),
                             CategoryId = 2,
-                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This luxurious house is everything you will need. It is just excellent.",
                             ImageUrl = "https://i.pinimg.com/originals/a6/f5/85/a6f5850a77633c56e4e4ac4f867e3c00.jpg",
                             PricePerMonth = 2000.00m,

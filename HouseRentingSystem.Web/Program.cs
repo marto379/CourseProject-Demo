@@ -1,10 +1,14 @@
-using HouseRentingSystem.Data;
-using HouseRentingSystem.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace HouseRentingSystem.Web
 {
+    using HouseRentingSystem.Data;
+    using HouseRentingSystem.Data.Models;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using Infrastructure.Extensions;
+    using HouseRentingSystem.Services.Data.Interfaces;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -25,6 +29,9 @@ namespace HouseRentingSystem.Web
                 options.Password.RequiredLength = 4;
             })
                 .AddEntityFrameworkStores<HouseRentingDbContext>();
+
+            builder.Services.AddApplicationServices(typeof(IHouseService));
+
             builder.Services.AddControllersWithViews();
 
             WebApplication app = builder.Build();

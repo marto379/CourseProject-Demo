@@ -10,6 +10,10 @@ namespace HouseRentingSystem.Data.Models
 {
     public class Agent
     {
+        public Agent()
+        {
+            this.Id = Guid.NewGuid();
+        }
         [Key]
         public Guid Id { get; set; }
 

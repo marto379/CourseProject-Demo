@@ -8,9 +8,13 @@ using static HouseRentingSystem.Common.EntityValidationConstants.House;
 
 namespace HouseRentingSystem.Data.Models
 {
-    
+
     public class House
     {
+        public House()
+        {
+            this.Id = Guid.NewGuid();
+        }
         [Key]
         public Guid Id { get; set; }
 
@@ -32,6 +36,8 @@ namespace HouseRentingSystem.Data.Models
 
         public decimal PricePerMonth { get; set; }
 
+        public DateTime CreatedOn { get; set; }
+
         public int CategoryId { get; set; }
 
         public Category Category { get; set; } = null!;
@@ -43,6 +49,6 @@ namespace HouseRentingSystem.Data.Models
 
         public Guid? RenterId { get; set; }
 
-        public virtual  ApplicationUser? Renter { get; set; }
+        public virtual ApplicationUser? Renter { get; set; }
     }
 }

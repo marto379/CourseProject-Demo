@@ -11,7 +11,7 @@ namespace HouseRentingSystem.Data.Models
     {
         public ApplicationUser()
         {
-
+            this.Id = Guid.NewGuid();
         }
 
         public virtual ICollection<House> RentedHouses { get; set; } = new List<House>();
