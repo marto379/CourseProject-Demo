@@ -1,0 +1,18 @@
+﻿@using static HouseRentingSystem.Common.NotificationMessagesConstants;
+
+@if (TempData.ContainsKey(ErrorMessage))
+{
+    toastr.error(TempData[ErrorMessage]);
+}
+@if (TempData.ContainsKey(WarningMessage))
+{
+    toastr.warning(TempData[WarningMessage]);
+}
+@if (TempData.ContainsKey(InformationMessage))
+{
+    toastr.info(TempData[InformationMessage]);
+}
+@if (TempData.ContainsKey(SuccessMessage))
+{
+    toastr.success(TempData[SuccessMessage]);
+}
