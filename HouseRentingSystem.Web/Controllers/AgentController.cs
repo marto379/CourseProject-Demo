@@ -4,6 +4,7 @@
     using HouseRentingSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using static HouseRentingSystem.Common.NotificationMessagesConstants;
 
     [Authorize]
     public class AgentController : Controller
@@ -21,7 +22,9 @@
             bool isAgent = await this.agentService.AgentExistByUserId(userId);
             if (isAgent)
             {
-                return BadRequest();
+                TempData[ErrorMessage] = "You are alredy an agent!";
+
+                return RedirectToAction("Index", "Home");
             }
 
             return View();
