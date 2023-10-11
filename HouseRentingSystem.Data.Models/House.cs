@@ -50,5 +50,7 @@ namespace HouseRentingSystem.Data.Models
         public Guid? RenterId { get; set; }
 
         public virtual ApplicationUser? Renter { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

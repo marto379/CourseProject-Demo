@@ -15,7 +15,11 @@ namespace HouseRentingSystem.Data.Configurations
         {
             builder
                 .Property(h => h.CreatedOn)
-                .HasDefaultValue(DateTime.UtcNow);
+                .HasDefaultValueSql("GETDATE()");
+
+            builder
+                .Property(h => h.IsActive)
+                .HasDefaultValue(true);
 
             builder
                 .HasOne(h => h.Category)
