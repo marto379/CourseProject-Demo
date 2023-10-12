@@ -89,5 +89,42 @@
 
             return RedirectToAction("All", "House"); 
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(string id)
+        {
+            HouseDetailsViewModel? viewModel = await houseService
+                .GetDetailsByHouseIdAsync(id);
+
+            if (viewModel == null)
+            {
+                this.TempData[ErrorMessage] = "House with the provided id does not exist!";
+                return RedirectToAction("All", "House");
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Mine()
+        {
+            List<HouseAllViewModel> myHouses = new List<HouseAllViewModel>();
+
+            string userId = this.User.GetId();
+            bool isUserAgent = await agentService.AgentExistByUserIdAsync(userId);
+
+            if (isUserAgent)
+            {
+                string agentId = await agentService.GetAgentIdByUserIdAsync(userId);
+
+                myHouses.AddRange(await houseService.AllByAgentIdAsync(agentId));
+            }
+            else
+            {
+                myHouses.AddRange(await this.houseService.AllByUserIdAsync(userId));
+            }
+            return View(myHouses);
+        }
     }
 }
