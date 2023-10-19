@@ -17,7 +17,7 @@
                 return new DecimalModelBinder();
             }
 
-            return null;
+            return null!;
         }
     }
 }

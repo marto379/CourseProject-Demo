@@ -13,7 +13,7 @@ namespace HouseRentingSystem.Services.Data.Interfaces
     {
         Task<IEnumerable<IndexViewModel>> LastThreeHousesAsync();
 
-        Task CreateAsync(HouseFormModel model, string agentId);
+        Task<string> CreateAsync(HouseFormModel model, string agentId);
 
         Task<AllHousesFilteredAndPagedServiceModel> AllAsync(AllHousesQueryModel queryModel);
 
@@ -21,6 +21,14 @@ namespace HouseRentingSystem.Services.Data.Interfaces
 
         Task<IEnumerable<HouseAllViewModel>> AllByUserIdAsync(string userId);
 
-        Task<HouseDetailsViewModel?> GetDetailsByHouseIdAsync(string houseId);
+        Task<HouseDetailsViewModel> GetDetailsByHouseIdAsync(string houseId);
+
+        Task<bool> ExistByIdAsync(string houseId);
+
+        Task<HouseFormModel> GetHouseForEditByIdAsync(string houseId);
+
+        Task<bool> IsAgentWithIdIsOwnerOfHouseWithIdAsync(string houseId, string agentId);
+
+        Task EditHouseByIdAndFormModelAsync(string houseId, HouseFormModel formModel);
     }
 }
