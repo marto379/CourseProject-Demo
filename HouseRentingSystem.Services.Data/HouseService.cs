@@ -138,6 +138,17 @@ namespace HouseRentingSystem.Services.Data
             return newHouse.Id.ToString();
         }
 
+        public async Task DeleteHouseByIdAsync(string houseId)
+        {
+            House houseToDelete = await dbContext
+                .Houses
+                .Where(h => h.IsActive)
+                .FirstAsync(h => h.Id.ToString() == houseId);
+
+            houseToDelete.IsActive = false;
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task EditHouseByIdAndFormModelAsync(string houseId, HouseFormModel formModel)
         {
             House house = await dbContext
@@ -191,6 +202,20 @@ namespace HouseRentingSystem.Services.Data
                     Email = house.Agent.User.Email,
                     PhoneNumber = house.Agent.PhoneNumber
                 }
+            };
+        }
+
+        public async Task<HouseDeleteDetailsViewModel> GetHouseForDeleteByIdAsync(string houseId)
+        {
+            House house = await dbContext.Houses
+                .Where(h => h.IsActive)
+                .FirstAsync(h => h.Id.ToString() == houseId);
+
+            return new HouseDeleteDetailsViewModel()
+            {
+                Title = house.Title,
+                Address = house.Address,
+                ImageUrl = house.ImageUrl
             };
         }
 
