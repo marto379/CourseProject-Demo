@@ -29,6 +29,7 @@
                     formDecimalValue = formDecimalValue.Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
 
                     parsedValue = Convert.ToDecimal(formDecimalValue);
+                    binderSucceeded = true;
                 }
                 catch (FormatException fe)
                 {
