@@ -257,6 +257,14 @@ namespace HouseRentingSystem.Services.Data
             return house.AgentId.ToString() == agentId;
         }
 
+        public async Task<bool> IsRentedByUserWithIdAsync(string houseId, string userId)
+        {
+            House? house = await dbContext.Houses
+                .FirstAsync(h => h.Id.ToString().ToLower() == houseId.ToLower());
+
+            return house.RenterId.HasValue && house.RenterId?.ToString().ToLower() == userId.ToLower();
+        }
+
         public async Task<IEnumerable<IndexViewModel>> LastThreeHousesAsync()
         {
             IEnumerable<IndexViewModel> lastThreeHouses = await this.dbContext

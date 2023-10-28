@@ -67,6 +67,7 @@
         {
             Agent? agent = await dbContext
                 .Agents
+                .Include(a => a.OwnedHouses)
                 .FirstOrDefaultAsync(a => a.UserId.ToString() == userId);
 
             if (agent == null)
@@ -74,6 +75,7 @@
                 return false;
             }
 
+            houseId = houseId.ToLower();
             return agent.OwnedHouses.Any(h => h.Id.ToString() == houseId);
         }
 
