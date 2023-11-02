@@ -38,6 +38,6 @@ namespace HouseRentingSystem.Services.Data.Interfaces
 
         Task<StatisticsServiceModel> GetStatisticsAsync();
 
-        Task<bool> IsRentedByUserWithIdAsync(string houseId, string userId);
+        Task<bool> IsRentedByUserWithIdAsync(string houseId, string? userId);
     }
 }

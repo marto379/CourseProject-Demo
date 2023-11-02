@@ -63,7 +63,7 @@
             return agent.Id.ToString(); 
         }
 
-        public async Task<bool> HasHouseWithIdAsync(string userId, string houseId)
+        public async Task<bool> HasHouseWithIdAsync(string? userId, string houseId)
         {
             Agent? agent = await dbContext
                 .Agents

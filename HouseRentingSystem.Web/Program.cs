@@ -35,6 +35,11 @@ namespace HouseRentingSystem.Web
             })
                 .AddEntityFrameworkStores<HouseRentingDbContext>();
 
+            builder.Services.ConfigureApplicationCookie(cfg =>
+            {
+                cfg.LoginPath = "/User/Login";
+            });
+
             builder.Services.AddApplicationServices(typeof(IHouseService));
 
             builder.Services.AddControllersWithViews()
