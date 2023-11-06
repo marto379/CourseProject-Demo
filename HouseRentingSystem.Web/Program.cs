@@ -1,18 +1,15 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using HouseRentingSystem.Data;
-
-
 namespace HouseRentingSystem.Web
 {
-    using HouseRentingSystem.Data;
-    using HouseRentingSystem.Data.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Infrastructure.Extensions;
+    using HouseRentingSystem.Data;
+    using HouseRentingSystem.Data.Models;
+    using HouseRentingSystem.Web.Infrastructure.Extensions;
     using HouseRentingSystem.Services.Data.Interfaces;
     using HouseRentingSystem.Web.Infrastructure.ModelBinders;
     using Microsoft.AspNetCore.Mvc;
+
+    using static HouseRentingSystem.Common.GeneralApplicationConstants;
 
     public class Program
     {
@@ -33,6 +30,7 @@ namespace HouseRentingSystem.Web
                 options.Password.RequireLowercase = false;
                 options.Password.RequiredLength = 4;
             })
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<HouseRentingDbContext>();
 
             builder.Services.ConfigureApplicationCookie(cfg =>
@@ -70,6 +68,7 @@ namespace HouseRentingSystem.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.SeedAdministrator(DevelopmentAdminEmail);
 
             app.MapDefaultControllerRoute();
             app.MapRazorPages();
