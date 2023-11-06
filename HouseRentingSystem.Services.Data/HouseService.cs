@@ -200,6 +200,7 @@ namespace HouseRentingSystem.Services.Data
                 Category = house.Category.Name,
                 Agent = new AgentInfoOnHouseViewModel()
                 {
+                    FullName = $"{house.Agent.User.FirstName} {house.Agent.User.LastName}", 
                     Email = house.Agent.User.Email,
                     PhoneNumber = house.Agent.PhoneNumber
                 }

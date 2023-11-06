@@ -13,11 +13,13 @@
         private readonly ICategoryService categoryService;
         private readonly IAgentService agentService;
         private readonly IHouseService houseService;
-        public HouseController(ICategoryService categoryService, IAgentService agentService, IHouseService houseService)
+        private readonly IUserService userService;
+        public HouseController(ICategoryService categoryService, IAgentService agentService, IHouseService houseService, IUserService userService)
         {
             this.categoryService = categoryService;
             this.agentService = agentService;
             this.houseService = houseService;
+            this.userService = userService;
         }
 
 
@@ -97,7 +99,7 @@
                 model.Categories = await categoryService.AllCategoriesAsync();
                 return View(model);
             }
-                      
+
         }
 
         [HttpGet]
@@ -111,10 +113,21 @@
                 this.TempData[ErrorMessage] = "House with the provided id does not exist!";
                 return RedirectToAction("All", "House");
             }
-            HouseDetailsViewModel viewModel = await houseService
-                .GetDetailsByHouseIdAsync(id);
+            try
+            {
+                HouseDetailsViewModel viewModel = await houseService
+               .GetDetailsByHouseIdAsync(id);
 
-            return View(viewModel);
+                //viewModel.Agent.FullName =
+                //    await userService.GetFullNameByEmailAsync(User.Identity?.Name!);
+
+                return View(viewModel);
+            }
+            catch (Exception)
+            {
+                return GeneralError();
+            }
+
         }
 
         [HttpGet]
