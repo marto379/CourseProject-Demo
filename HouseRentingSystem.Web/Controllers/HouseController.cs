@@ -6,6 +6,7 @@
     using HouseRentingSystem.Web.ViewModels.House;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Memory;
     using static Common.NotificationMessagesConstants;
     [Authorize]
     public class HouseController : Controller
@@ -14,12 +15,15 @@
         private readonly IAgentService agentService;
         private readonly IHouseService houseService;
         private readonly IUserService userService;
-        public HouseController(ICategoryService categoryService, IAgentService agentService, IHouseService houseService, IUserService userService)
+
+        private readonly IMemoryCache memoryCache;
+        public HouseController(ICategoryService categoryService, IAgentService agentService, IHouseService houseService, IUserService userService, IMemoryCache memoryCache)
         {
             this.categoryService = categoryService;
             this.agentService = agentService;
             this.houseService = houseService;
             this.userService = userService;
+            this.memoryCache = memoryCache;
         }
 
 
@@ -118,9 +122,6 @@
                 HouseDetailsViewModel viewModel = await houseService
                .GetDetailsByHouseIdAsync(id);
 
-                //viewModel.Agent.FullName =
-                //    await userService.GetFullNameByEmailAsync(User.Identity?.Name!);
-
                 return View(viewModel);
             }
             catch (Exception)
@@ -139,7 +140,17 @@
             bool isUserAgent = await agentService.AgentExistByUserIdAsync(userId);
             try
             {
-                if (isUserAgent)
+                if (this.User.IsAdmin())
+                {
+                    string agentId = await agentService.GetAgentIdByUserIdAsync(userId);
+
+                    myHouses.AddRange(await houseService.AllByAgentIdAsync(agentId));
+
+                    myHouses.AddRange(await this.houseService.AllByUserIdAsync(userId));
+
+                    myHouses = myHouses.DistinctBy(x => x.Id).ToList();
+                }
+                else if (isUserAgent)
                 {
                     string agentId = await agentService.GetAgentIdByUserIdAsync(userId);
 
@@ -171,7 +182,7 @@
 
             bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId());
 
-            if (!isUserAgent)
+            if (!isUserAgent && this.User.IsAdmin())
             {
                 this.TempData[ErrorMessage] = "You must become an agent in order to edit house info!";
 
@@ -182,7 +193,7 @@
 
             bool isAgentOwner = await houseService.IsAgentWithIdIsOwnerOfHouseWithIdAsync(id, agentId);
 
-            if (!isAgentOwner)
+            if (!isAgentOwner && !User.IsAdmin())
             {
                 this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to edit!";
 
@@ -223,7 +234,7 @@
 
             bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId());
 
-            if (!isUserAgent)
+            if (!isUserAgent && !this.User.IsAdmin())
             {
                 this.TempData[ErrorMessage] = "You must become an agent in order to edit house info!";
 
@@ -234,7 +245,7 @@
 
             bool isAgentOwner = await houseService.IsAgentWithIdIsOwnerOfHouseWithIdAsync(id, agentId);
 
-            if (!isAgentOwner)
+            if (!isAgentOwner && !this.User.IsAdmin())
             {
                 this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to edit!";
 
@@ -257,6 +268,93 @@
             return RedirectToAction("Details", "House", new { id });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Rent(string id)
+        {
+            bool houseExists = await houseService.ExistByIdAsync(id);
+            if (!houseExists)
+            {
+                TempData[ErrorMessage] = "House with provided id does not exist! Please try again!";
+
+                return RedirectToAction("All", "House");
+            }
+
+            bool isHouseRented = await houseService.IsRentedAsync(id);
+            if (isHouseRented)
+            {
+                TempData[ErrorMessage] =
+                    "Selected house is already rented by another user! Please select another house.";
+
+                return RedirectToAction("All", "House");
+            }
+
+            bool isUserAgent =
+                await agentService.AgentExistByUserIdAsync(User.GetId()!);
+            if (isUserAgent && !User.IsAdmin())
+            {
+                TempData[ErrorMessage] = "Agents can't rent houses. Please register as a user!";
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                await houseService.RentHouseAsync(id, User.GetId()!);
+            }
+            catch (Exception)
+            {
+                return GeneralError();
+            }
+
+            //this.memoryCache.Remove(RentsCacheKey);
+
+            return RedirectToAction("Mine", "House");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(string id)
+        {
+            bool houseExists = await houseService.ExistByIdAsync(id);
+            if (!houseExists)
+            {
+                TempData[ErrorMessage] = "House with provided id does not exist! Please try again!";
+
+                return RedirectToAction("All", "House");
+            }
+
+            bool isHouseRented = await houseService.IsRentedAsync(id);
+            if (!isHouseRented)
+            {
+                TempData[ErrorMessage] =
+                    "Selected house is not rented! Please select one of your houses if you wish to leave them.";
+
+                return RedirectToAction("Mine", "House");
+            }
+
+            bool isCurrentUserRenterOfTheHouse =
+                await houseService.IsRentedByUserWithIdAsync(id, User.GetId()!);
+            if (!isCurrentUserRenterOfTheHouse)
+            {
+                TempData[ErrorMessage] =
+                    "You must be the renter of the house in order to leave it! Please try again with one of your rented houses if you wish to leave them.";
+
+                return RedirectToAction("Mine", "House");
+            }
+
+            try
+            {
+                await houseService.LeaveHouseAsync(id);
+            }
+            catch (Exception)
+            {
+                return GeneralError();
+            }
+
+            //this.memoryCache.Remove(RentsCacheKey);
+
+            return RedirectToAction("Mine", "House");
+        }
+
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
@@ -270,9 +368,9 @@
 
             bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId());
 
-            if (!isUserAgent)
+            if (!isUserAgent && this.User.IsAdmin())
             {
-                this.TempData[ErrorMessage] = "You must become an agent in order to edit house info!";
+                this.TempData[ErrorMessage] = "You must become an agent in order to delete house!";
 
                 return RedirectToAction("Become", "Agent");
             }
@@ -281,9 +379,9 @@
 
             bool isAgentOwner = await houseService.IsAgentWithIdIsOwnerOfHouseWithIdAsync(id, agentId);
 
-            if (!isAgentOwner)
+            if (!isAgentOwner && this.User.IsAdmin())
             {
-                this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to edit!";
+                this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to delete!";
 
                 return RedirectToAction("Mine", "House");
             }

@@ -8,11 +8,7 @@ using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
 using HouseRentingSystem.Web.ViewModels.House.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using static HouseRentingSystem.Common.EntityValidationConstants;
 
 namespace HouseRentingSystem.Services.Data
 {
@@ -258,6 +254,15 @@ namespace HouseRentingSystem.Services.Data
             return house.AgentId.ToString() == agentId;
         }
 
+        public async Task<bool> IsRentedAsync(string houseId)
+        {
+            House? house = await dbContext.Houses
+               .FirstAsync(h => h.Id.ToString().ToLower() == houseId.ToLower());
+
+            return house.RenterId.HasValue;
+                
+        }
+
         public async Task<bool> IsRentedByUserWithIdAsync(string houseId, string? userId)
         {
             House? house = await dbContext.Houses
@@ -282,6 +287,26 @@ namespace HouseRentingSystem.Services.Data
                 .ToArrayAsync();
 
             return lastThreeHouses;
+        }
+
+        public async Task LeaveHouseAsync(string houseId)
+        {
+            HouseRentingSystem.Data.Models.House house = await dbContext
+                .Houses
+                .FirstAsync(h => h.Id.ToString() == houseId);
+            house.RenterId = null;
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task RentHouseAsync(string houseId, string userId)
+        {
+            HouseRentingSystem.Data.Models.House house = await dbContext
+                .Houses
+                .FirstAsync(h => h.Id.ToString() == houseId);
+            house.RenterId = Guid.Parse(userId);
+
+            await dbContext.SaveChangesAsync();
         }
     }
 }
