@@ -9,7 +9,7 @@
                 $('#total_rents').text(data.totalRents + " Rents");
 
                 $('#statistics_box').removeClass('d-none');
-                $('#statistics_btn').text('Hde Statistics');
+                $('#statistics_btn').text('Hide Statistics');
                 $('#statistics_btn').removeClass('btn-primary');
                 $('#statistics_btn').addClass('btn-danger');
             });
